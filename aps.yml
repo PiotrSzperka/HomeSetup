@@ -1,0 +1,8 @@
+---
+- name: configure AP
+  hosts: aps
+
+  roles:
+    - gekmihesg.openwrt
+    - nn708.openwrt.dumb_ap
+    - wifi

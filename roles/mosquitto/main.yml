@@ -1,0 +1,29 @@
+- name: install mosquitto
+  opkg:
+    name: mosquitto
+    state: present
+
+- name: Configure mosqitto for UCI
+  uci:
+    command: set
+    key: mosquitto.owrt
+    value:
+      use_uci: 1
+
+- name: Configure mosqitto
+  uci:
+    command: set
+    key: mosquitto.mosquitto
+    value:
+      port: 1883
+      allow_anonymous: 1
+
+- name: Commit changes
+  uci:
+    command: commit
+
+- name: enable mosquitto
+  command: "/etc/init.d/mosquitto enable"
+
+- name: start mosquitto
+  command: "/etc/init.d/mosquitto start"

@@ -1,0 +1,11 @@
+- name: test
+  hosts: aps
+  # become_user: root
+  # become: true
+
+  roles:
+    - gekmihesg.openwrt
+
+  tasks:
+  - name: debug
+    command: "echo Pwd: {{ openwrt_wireless_key }}"

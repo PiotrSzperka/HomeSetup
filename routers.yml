@@ -1,0 +1,19 @@
+---
+- name: configure AP
+  hosts: routers
+  become: true
+
+  vars:
+    openwrt_dhcp_lan_start: 30
+    openwrt_dhcp_static_leases:
+      - name: AP 
+        hostid: AP 
+        mac: 78:11:DC:1B:1B:44
+        ip: 192.168.1.2
+
+  roles:
+    - nn708.openwrt.network
+    - nn708.openwrt.dhcp
+    - wifi
+    - mosquitto
+
