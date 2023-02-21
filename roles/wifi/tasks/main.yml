@@ -1,3 +1,4 @@
+---
 # Set bands
 - name: Set 5Ghz band (radio0)
   uci:

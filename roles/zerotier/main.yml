@@ -1,0 +1,29 @@
+- name: install zerotier
+  opkg:
+    name: zerotier
+    state: present
+
+- name: Configure zerotier
+  uci:
+    command: set
+    key: zerotier
+    value:
+      home: zerotier
+      home.enabled: 1
+
+- name: Configure zerotier
+  uci:
+    command: add_list
+    key: zerotier.home
+    value:
+      join: '{{ zerotier_network }}'
+
+- name: Commit changes
+  uci:
+    command: commit
+
+- name: reload zerotier
+  shell: "/etc/init.d/zerotier reload"
+
+- name: Reboot device
+  shell: reboot

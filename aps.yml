@@ -5,4 +5,115 @@
   roles:
     - gekmihesg.openwrt
     - nn708.openwrt.dumb_ap
-    - wifi
+
+  tasks:
+    # Set bands
+    - name: Set 5Ghz band (radio0)
+      uci:
+        command: set
+        key: wireless.radio0
+        value:
+          htmode: VHT80
+          channel: auto
+          country: PL
+          disabled: 0
+
+    - name: Set 2.4Ghz band (radio1)
+      uci:
+        command: set
+        key: wireless.radio1
+        value:
+          htmode: HT20
+          channel: auto
+          country: PL
+          disabled: 0
+
+    - name: disable 3rd radio if present
+      uci:
+        command: set
+        key: wireless.radio1
+        value:
+          disabled: 1
+      when: disable_3rd_radio
+
+      # Delete default SSID if exist
+    - name: Delete default SSID on radio 0
+      ignore_errors: yes
+      uci:
+        command: delete
+        key: wireless.wifinet0
+    - name: Delete default SSID on radio 1
+      ignore_errors: yes
+      uci:
+        command: delete
+        key: wireless.wifinet1
+
+    - name: Delete Guest SSID on radio 0
+      ignore_errors: yes
+      uci:
+        command: delete
+        key: wireless.wifinet2
+    - name: Delete Guest SSID on radio 1
+      ignore_errors: yes
+      uci:
+        command: delete
+        key: wireless.wifinet3
+
+    # Set SSID
+    - name: Add WiFi SSID (5Ghz)
+      uci:
+        command: set
+        key: wireless.wifinet0
+        value: "wifi-iface"
+    - name: Set WiFi SSID (5Ghz)
+      uci:
+        command: set
+        key: wireless.wifinet0
+        value:
+          ssid: '{{ openwrt_wireless_ssid}}'
+          encryption: '{{ openwrt_wireless_encryption }}'
+          device: radio0
+          mode: ap
+          network: lan
+          key: '{{ openwrt_wireless_key }}'
+          ieee80211r: 1
+          ft_over_ds: 1
+          ft_psk_generate_local: 1
+          bss_transition: 1
+          wnm_sleep_mode: 1
+          time_advertisement: 2
+          ieee80211k: 1
+          rrm_neighbor_report: 1
+          rrm_beacon_report : 1
+
+    - name: Add WiFi SSID (2.4Ghz)
+      uci:
+        command: set
+        key: wireless.wifinet1
+        value: "wifi-iface"
+    - name: Set WiFi SSID (2.4Ghz)
+      uci:
+        command: set
+        key: wireless.wifinet1
+        value:
+          ssid: '{{ openwrt_wireless_ssid }}'
+          encryption: '{{ openwrt_wireless_encryption }}'
+          device: radio1
+          mode: ap
+          network: lan
+          key: '{{ openwrt_wireless_key }}'
+          ieee80211r: 1
+          ft_over_ds: 1
+          ft_psk_generate_local: 1
+          bss_transition: 1
+          wnm_sleep_mode: 1
+          time_advertisement: 2
+          ieee80211k: 1
+          rrm_neighbor_report: 1
+          rrm_beacon_report : 1
+
+    # Apply changes
+    - name: Commit changes
+      uci:
+        command: commit
+      notify: reload wifi

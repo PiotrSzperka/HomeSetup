@@ -23,7 +23,7 @@
     command: commit
 
 - name: enable mosquitto
-  command: "/etc/init.d/mosquitto enable"
+  shell: "/etc/init.d/mosquitto enable"
 
 - name: start mosquitto
-  command: "/etc/init.d/mosquitto start"
+  shell: "/etc/init.d/mosquitto start"
